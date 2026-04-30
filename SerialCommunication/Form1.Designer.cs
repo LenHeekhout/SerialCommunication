@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.radioButtonVerbonden = new System.Windows.Forms.RadioButton();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.labelPoort = new System.Windows.Forms.Label();
@@ -88,6 +89,7 @@
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.serialPort1Arduino = new System.IO.Ports.SerialPort(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageInstellingen.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -873,7 +875,7 @@
             this.Controls.Add(this.comboBoxPoort);
             this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "Form1";
-            this.Text = "BZL seriële communicatie Len Heekhout";
+            this.Text = "BZL seriële communicatie";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl.ResumeLayout(false);
             this.tabPageInstellingen.ResumeLayout(false);
@@ -971,6 +973,7 @@
         internal System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel labelStatus;
+        private System.IO.Ports.SerialPort serialPort1Arduino;
     }
 }
 

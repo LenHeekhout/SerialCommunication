@@ -54,7 +54,66 @@ namespace SerialCommunication
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-            // abc def ghi jkl
+            try
+            {
+                if (serialPort1Arduino.IsOpen)
+                {
+                    //wilt verbreken
+                    serialPort1Arduino.Close();
+                    radioButtonVerbonden.Checked = false;
+                    buttonConnect.Text = "Connect";
+                    labelStatus.Text = "Status: Disconected";
+                }
+                else
+                {
+                    //wilt verbinden
+                    serialPort1Arduino.PortName = (string)comboBoxPoort.SelectedItem;
+                    serialPort1Arduino.BaudRate = Int32.Parse((string)comboBoxBaudrate.SelectedItem);
+                    serialPort1Arduino.DataBits = (int)numericUpDownDatabits.Value;
+
+                    if (radioButtonParityEven.Checked) serialPort1Arduino.Parity = Parity.Even;
+                    else if (radioButtonParityOdd.Checked) serialPort1Arduino.Parity = Parity.Odd;
+                    else if (radioButtonParityNone.Checked) serialPort1Arduino.Parity = Parity.None;
+                    else if (radioButtonParityMark.Checked) serialPort1Arduino.Parity = Parity.Mark;
+                    else if (radioButtonParitySpace.Checked) serialPort1Arduino.Parity = Parity.Space;
+
+                    if (radioButtonStopbitsNone.Checked) serialPort1Arduino.StopBits = StopBits.None;
+                    else if (radioButtonStopbitsOne.Checked) serialPort1Arduino.StopBits = StopBits.One;
+                    else if (radioButtonStopbitsOnePointFive.Checked) serialPort1Arduino.StopBits = StopBits.OnePointFive;
+                    else if (radioButtonStopbitsTwo.Checked) serialPort1Arduino.StopBits = StopBits.Two;
+
+                    if (radioButtonHandshakeNone.Checked) serialPort1Arduino.Handshake = Handshake.None;
+                    else if (radioButtonHandshakeRTS.Checked) serialPort1Arduino.Handshake = Handshake.RequestToSend;
+                    else if (radioButtonHandshakeRTSXonXoff.Checked) serialPort1Arduino.Handshake = Handshake.RequestToSendXOnXOff;
+                    else if (radioButtonHandshakeXonXoff.Checked) serialPort1Arduino.Handshake = Handshake.XOnXOff;
+
+                    serialPort1Arduino.RtsEnable = checkBoxRtsEnable.Checked;
+                    serialPort1Arduino.DtrEnable = checkBoxDtrEnable.Checked;
+
+                    serialPort1Arduino.Open();
+                    string commando = "ping";
+                    serialPort1Arduino.WriteLine(commando);
+                    string antwoord = serialPort1Arduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    if (antwoord == "pong")
+                    {
+                        radioButtonVerbonden.Checked = true;
+                        buttonConnect.Text = "Disconnect";
+                    }
+                    else
+                    {
+                        serialPort1Arduino.Close();
+                        labelStatus.Text = "Error: verkeerd antwoord";
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error:" + exception.Message;
+                serialPort1Arduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
         }
     }
 }
