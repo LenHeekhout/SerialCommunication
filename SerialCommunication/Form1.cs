@@ -118,36 +118,54 @@ namespace SerialCommunication
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            timerOefening3.Enabled = tabControl.SelectedIndex == 3;
+            timerOefening5.Enabled = tabControl.SelectedIndex == 5;
         }
-        private void timerOefening3_Tick(object sender, EventArgs e)
+        private void timerOefening5_Tick(object sender, EventArgs e)
         {
+            double rico = 0.039100684;
+            int offset = 5;
+            double rico1 = 0.488758553;
             try
             {
                 if (serialPort1Arduino.IsOpen)
                 {
-                    serialPort1Arduino.ReadExisting();
 
-                    string commando = "get d5";
+                    serialPort1Arduino.ReadExisting();
+                    string commando = "get a0";
                     serialPort1Arduino.WriteLine(commando);
                     string antwoord = serialPort1Arduino.ReadLine();
                     antwoord = antwoord.TrimEnd();
                     antwoord = antwoord.Substring(4);
-                    radioButtonDigital5.Checked = (antwoord == "1");
 
-                    commando = "get d6";
-                    serialPort1Arduino.WriteLine(commando);
-                    antwoord = serialPort1Arduino.ReadLine();
-                    antwoord = antwoord.TrimEnd();
-                    antwoord = antwoord.Substring(4);
-                    radioButtonDigital6.Checked = (antwoord == "1");
+                    double value = double.Parse(antwoord);
 
-                    commando = "get d7";
-                    serialPort1Arduino.WriteLine(commando);
-                    antwoord = serialPort1Arduino.ReadLine();
-                    antwoord = antwoord.TrimEnd();
-                    antwoord = antwoord.Substring(4);
-                    radioButtonDigital7.Checked = (antwoord == "1");
+
+                    double temperatuur = (rico * value) + offset;
+
+
+                    labelGewensteTemp.Text = temperatuur.ToString("0.0°C");
+
+                    serialPort1Arduino.ReadExisting();
+                    string commando1 = "get a1";
+                    serialPort1Arduino.WriteLine(commando1);
+                    string antwoord1 = serialPort1Arduino.ReadLine();
+                    antwoord1 = antwoord1.TrimEnd();
+                    antwoord1 = antwoord1.Substring(4);
+
+                    double value1 = double.Parse(antwoord1);
+
+
+                    double temperatuur1 = rico1 * value1;
+
+                    labelHuidigeTemp.Text = temperatuur1.ToString("0.0°C");
+                    string commando2;
+                    if (temperatuur1 < temperatuur) commando2 = "set d2 high";
+                    else commando2 = "set d2 low";
+                    serialPort1Arduino.WriteLine(commando2);
+
+
+
+
                 }
             }
             catch (Exception exception)
@@ -158,5 +176,6 @@ namespace SerialCommunication
                 buttonConnect.Text = "Connect";
             }
         }
+
     }
 }
