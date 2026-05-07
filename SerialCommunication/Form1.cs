@@ -17,6 +17,7 @@ namespace SerialCommunication
         public Form1()
         {
             InitializeComponent();
+            this.tabControl.SelectedIndexChanged += tabControl_SelectedIndexChanged;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -99,11 +100,13 @@ namespace SerialCommunication
                     {
                         radioButtonVerbonden.Checked = true;
                         buttonConnect.Text = "Disconnect";
+                        labelStatus.Text = "Status: Connected";
                     }
                     else
                     {
                         serialPort1Arduino.Close();
                         labelStatus.Text = "Error: verkeerd antwoord";
+                        radioButtonVerbonden.Checked = false;
                     }
                 }
             }
@@ -116,56 +119,16 @@ namespace SerialCommunication
             }
         }
 
-        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        private void checkBoxDigital2_CheckedChanged(object sender, EventArgs e)
         {
-            timerOefening5.Enabled = tabControl.SelectedIndex == 5;
-        }
-        private void timerOefening5_Tick(object sender, EventArgs e)
-        {
-            double rico = 0.039100684;
-            int offset = 5;
-            double rico1 = 0.488758553;
             try
             {
                 if (serialPort1Arduino.IsOpen)
                 {
-
-                    serialPort1Arduino.ReadExisting();
-                    string commando = "get a0";
+                    string commando; //set d2 high/low
+                    if (checkBoxDigital2.Checked) commando = "set d2 high";
+                    else commando = "set d2 low";
                     serialPort1Arduino.WriteLine(commando);
-                    string antwoord = serialPort1Arduino.ReadLine();
-                    antwoord = antwoord.TrimEnd();
-                    antwoord = antwoord.Substring(4);
-
-                    double value = double.Parse(antwoord);
-
-
-                    double temperatuur = (rico * value) + offset;
-
-
-                    labelGewensteTemp.Text = temperatuur.ToString("0.0°C");
-
-                    serialPort1Arduino.ReadExisting();
-                    string commando1 = "get a1";
-                    serialPort1Arduino.WriteLine(commando1);
-                    string antwoord1 = serialPort1Arduino.ReadLine();
-                    antwoord1 = antwoord1.TrimEnd();
-                    antwoord1 = antwoord1.Substring(4);
-
-                    double value1 = double.Parse(antwoord1);
-
-
-                    double temperatuur1 = rico1 * value1;
-
-                    labelHuidigeTemp.Text = temperatuur1.ToString("0.0°C");
-                    string commando2;
-                    if (temperatuur1 < temperatuur) commando2 = "set d2 high";
-                    else commando2 = "set d2 low";
-                    serialPort1Arduino.WriteLine(commando2);
-
-
-
-
                 }
             }
             catch (Exception exception)
@@ -173,9 +136,125 @@ namespace SerialCommunication
                 labelStatus.Text = "Error: " + exception.Message;
                 serialPort1Arduino.Close();
                 radioButtonVerbonden.Checked = false;
-                buttonConnect.Text = "Connect";
+                buttonConnect.Text = "connect";
+            }
+
+        }
+
+        private void checkBoxDigital3_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1Arduino.IsOpen)
+                {
+                    string commando; //set d3 high/low
+                    if (checkBoxDigital3.Checked) commando = "set d3 high";
+                    else commando = "set d3 low";
+                    serialPort1Arduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPort1Arduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "connect";
             }
         }
 
+        private void checkBoxDigital4_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1Arduino.IsOpen)
+                {
+                    string commando; //set d4 high/low
+                    if (checkBoxDigital4.Checked) commando = "set d4 high";
+                    else commando = "set d4 low";
+                    serialPort1Arduino.WriteLine(commando);
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPort1Arduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "connect";
+            }
+        }
+
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Check of de geselecteerde tab degene is van Oefening 5
+            if (tabControl.SelectedTab == tabPageOefening5)
+            {
+                // Hier komt de code die moet starten voor de oefening
+                timerOefening5.Start();
+            }
+        }
+
+        private void timerOef5_Tick(object sender, EventArgs e)
+        {
+            timerOefening5.Start();
+            try
+            {
+                if (serialPort1Arduino.IsOpen)
+                {
+
+                    // === GEWENSTE TEMPERATUUR (analoge pin 0) ===
+                    double richtingscoefficientGewenst = 40.0 / 1023.0;
+                    double offsetGewenst = 5.0;
+
+                    // Lees analoge pin 0 uit via seriële communicatie
+                    serialPort1Arduino.ReadExisting();
+                    serialPort1Arduino.WriteLine("get a0");
+                    string antwoordA0 = serialPort1Arduino.ReadLine();
+
+                    int waardeA0 = int.Parse(antwoordA0.Substring(4));
+                    double gewensteTemp = (richtingscoefficientGewenst * waardeA0) + offsetGewenst;
+
+                    labelGewensteTemp.Text = gewensteTemp.ToString("F1") + " °C";
+
+
+                    // === HUIDIGE TEMPERATUUR (analoge pin 1) ===
+                    double richtingscoefficientHuidig = 500.0 / 1023.0;
+
+                    // Lees analoge pin 1 uit via seriële communicatie
+                    serialPort1Arduino.ReadExisting();
+                    serialPort1Arduino.WriteLine("get a1");
+                    string antwoordA1 = serialPort1Arduino.ReadLine();
+
+
+                    int waardeA1 = int.Parse(antwoordA1.Substring(4));
+                    double huidigeTemp = (richtingscoefficientHuidig * waardeA1);
+
+                    labelHuidigeTemp.Text = huidigeTemp.ToString("F1") + " °C";
+
+                    if (huidigeTemp < gewensteTemp)
+                    {
+                        // LED AAN
+                        serialPort1Arduino.WriteLine("set d2 high");
+
+                    }
+                    else
+                    {
+                        // LED UIT
+                        serialPort1Arduino.WriteLine("set d2 low");
+                    }
+
+                }
+            }
+            catch (Exception exception)
+            {
+                timerOefening5.Stop();
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPort1Arduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "connect";
+            }
+
+
+
+        }
     }
 }
