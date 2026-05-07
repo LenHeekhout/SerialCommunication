@@ -17,7 +17,7 @@ namespace SerialCommunication
         public Form1()
         {
             InitializeComponent();
-            this.tabControl.SelectedIndexChanged += tabControl_SelectedIndexChanged;
+            this.tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -183,7 +183,7 @@ namespace SerialCommunication
             }
         }
 
-        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Check of de geselecteerde tab degene is van Oefening 5
             if (tabControl.SelectedTab == tabPageOefening5)
@@ -193,7 +193,7 @@ namespace SerialCommunication
             }
         }
 
-        private void timerOef5_Tick(object sender, EventArgs e)
+        private void timerOefening5_Tick(object sender, EventArgs e)
         {
             timerOefening5.Start();
             try

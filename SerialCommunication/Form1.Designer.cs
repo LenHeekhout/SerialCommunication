@@ -177,7 +177,7 @@
             this.tabControl.Size = new System.Drawing.Size(1568, 802);
             this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
             this.tabControl.TabIndex = 9;
-            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             // 
             // tabPageInstellingen
             // 
@@ -868,6 +868,7 @@
             // timerOefening5
             // 
             this.timerOefening5.Interval = 1000;
+            this.timerOefening5.Tick += new System.EventHandler(this.timerOefening5_Tick);
             // 
             // Form1
             // 
