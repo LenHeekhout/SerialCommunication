@@ -90,7 +90,6 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.serialPort1Arduino = new System.IO.Ports.SerialPort(this.components);
-            this.timerOefening3 = new System.Windows.Forms.Timer(this.components);
             this.timerOefening5 = new System.Windows.Forms.Timer(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageInstellingen.SuspendLayout();
@@ -866,6 +865,10 @@
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(0, 12);
             // 
+            // timerOefening5
+            // 
+            this.timerOefening5.Interval = 1000;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -978,7 +981,6 @@
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel labelStatus;
         private System.IO.Ports.SerialPort serialPort1Arduino;
-        private System.Windows.Forms.Timer timerOefening3;
         private System.Windows.Forms.Timer timerOefening5;
     }
 }
